@@ -1,10 +1,43 @@
 #!/bin/bash
 # Chromium CDP Auto-Start Script for OpenClaw
-# Ensures browser is always available after gateway restart
+# Supports stealth mode via puppeteer-extra
 
-CDP_PORT=9222
+CDP_PORT=9220
 CHROMIUM_DATA_DIR=/tmp/chromium-data
+STEALTH_DATA_DIR=/tmp/chromium-stealth-data
 LOG_FILE=/tmp/chromium.log
+STEALTH_LOG=/tmp/stealth-browser.log
+
+start_stealth() {
+    # Kill existing on stealth port
+    pkill -f "remote-debugging-port=$CDP_PORT" 2>/dev/null
+    pkill -f "stealth-browser" 2>/dev/null
+    sleep 1
+    
+    # Check if already running
+    if curl -s http://127.0.0.1:$CDP_PORT/json/version > /dev/null 2>&1; then
+        echo "Stealth Chromium already running on port $CDP_PORT"
+        exit 0
+    fi
+    
+    cd /home/azureuser/.openclaw/workspace
+    
+    # Start stealth browser via Node/puppeteer-extra
+    nohup node scripts/stealth-browser.js $CDP_PORT $STEALTH_DATA_DIR > $STEALTH_LOG 2>&1 &
+    
+    # Wait for CDP
+    for i in {1..15}; do
+        if curl -s http://127.0.0.1:$CDP_PORT/json/version > /dev/null 2>&1; then
+            echo "Stealth Chromium started on port $CDP_PORT"
+            exit 0
+        fi
+        sleep 1
+    done
+    
+    echo "Failed to start stealth browser"
+    cat $STEALTH_LOG
+    exit 1
+}
 
 start_chromium() {
     # Kill any existing Chromium on this port
@@ -53,11 +86,14 @@ start_chromium() {
 }
 
 case "$1" in
+    stealth)
+        start_stealth
+        ;;
     start)
         start_chromium
         ;;
     restart)
-        start_chromium
+        start_stealth
         ;;
     status)
         if curl -s http://127.0.0.1:$CDP_PORT/json/version > /dev/null 2>&1; then
@@ -69,7 +105,7 @@ case "$1" in
         fi
         ;;
     *)
-        echo "Usage: $0 {start|restart|status}"
+        echo "Usage: $0 {start|restart|stealth|status}"
         exit 1
         ;;
 esac
