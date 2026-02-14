@@ -1,15 +1,15 @@
 import { Composio } from "@composio/core";
 
-const client = new Composio({ apiKey: process.env.COMPOSIO_API_KEY });
+const client = new Composio({ apiKey: "ak_kSNoX4_ctvk7I3AoYiYR" });
 
 // List available apps
-async function listApps() {
+async function main() {
   try {
-    const apps = await client.apps.list({ limit: 10 });
+    const apps = await client.apps.list();
     console.log("Available apps:", JSON.stringify(apps, null, 2));
   } catch (error) {
     console.error("Error:", error.message);
   }
 }
 
-listApps();
+main();

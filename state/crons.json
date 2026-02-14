@@ -1,0 +1,22 @@
+{
+  "jobs": [
+    {
+      "id": "9ae90e14-8900-4d20-9837-2e02ad48ca30",
+      "name": "GitHub Push Hourly",
+      "schedule": "0 * * * *",
+      "status": "idle",
+      "lastRun": "2026-02-14T10:59:03.761Z",
+      "lastStatus": "success",
+      "consecutiveErrors": 0
+    },
+    {
+      "id": "7458928d-4ad4-4119-9805-0ae7c316679e",
+      "name": "Polymarket Research Report",
+      "schedule": "0 6 * * *",
+      "status": "idle",
+      "lastRun": "2026-02-14T06:00:00Z",
+      "lastStatus": "success",
+      "consecutiveErrors": 0
+    }
+  ]
+}
