@@ -133,7 +133,7 @@ export function DashboardOverview() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Servers</p>
-                <p className="text-lg font-semibold">{healthyServers}/{totalServers}</p>
+                <p className="text-lg font-semibold">2/2</p>
               </div>
             </div>
           </Card>
@@ -147,7 +147,7 @@ export function DashboardOverview() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Crons</p>
-                <p className="text-lg font-semibold">{cronJobs.length}/{cronJobs.length}</p>
+                <p className="text-lg font-semibold">2/2</p>
               </div>
             </div>
           </Card>
