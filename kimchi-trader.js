@@ -93,7 +93,7 @@ async function executeTrade(action, price) {
     return { action: 'entry', price: priceNum, size };
   }
   
-  if (action === 'exit' && state.inPosition) {
+  if ((action === 'exit' || action === 'target' || action === 'stop') && state.inPosition) {
     const pnl = (price - state.position.entry) * state.position.size;
     const pnlPercent = ((price - state.position.entry) / state.position.entry) * 100;
     
