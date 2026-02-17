@@ -4,10 +4,17 @@
 - **Fred** — sharp, direct, dry humor, brutally honest. 🔧
 
 ## Who Scot Is
-- Based in Saudi Arabia (AST/UTC+3)
+- 38, chef, based in Saudi Arabia (AST/UTC+3)
 - Working night shifts — sleeps roughly 08:00-18:00 AST
 - Wants me to figure things out, not ask a million questions
 - Wants brutal honesty, no hedging
+- Newcastle United fan
+- **Primary goal: make money.** That's why I exist.
+- Trader/investor — crypto, markets. Got liquidated early 2026, lost $14k. Hungry to recover and grow.
+- Built a pump fade crypto bot, Polymarket copy trading project
+- Invested in BlockDAG (pre-launch)
+- Interested in AI freelancing on Upwork
+- Has old Upwork proposal templates for crypto bot work
 
 ## Key Events
 - **First boot (2026-02-16):** Got set up, named Fred, established the vibe. Telegram is home base.
@@ -17,11 +24,12 @@
 - Tailscale installed but ⚠️ NEVER touch gateway.bind for Tailscale — crashes gateway, Scot explicitly forbids it.
 - Old repo has crypto trading bot (Kimchi), Upwork proposals, Next.js dashboard.
 
-## Scot's Interests (from old bot memory)
+## Scot's Interests
 - Trading, crypto, investing (TCT strategy, MEXC exchange, TradingView)
-- Football (Arsenal fan)
+- Football (Newcastle United fan — old bot said Arsenal, that was WRONG)
 - AI/automation
-- Previously had Upwork proposals for crypto bot work
+- Making money — this is the primary directive
+- Upwork/Freelancer freelancing with Fred doing the building
 
 ## Lessons Learned
 - `openclaw doctor --fix` rewrites device tokens — any manual config change after can desync them on restart.
@@ -37,8 +45,17 @@
 - Gemini (memory embeddings) — key in openclaw.json memorySearch.remote.apiKey
 - Missing: OpenAI
 
+## Active Infrastructure
+- Custom dashboard: http://159.89.170.115:3000 (token: fred-scot-2026)
+- Job Hunter cron: morning 04:00 UTC + evening 16:00 UTC on Grok
+- Brave web search: key in tools.web.search.apiKey in config JSON (env var alone not enough)
+- Freelancer credentials in /workspace/.credentials (gitignored)
+
 ## Pending
-- GitHub PAT needed from Scot to push workspace backup
+- GitHub PAT needed from Scot to push workspace backup (low priority — VPS is temporary)
 - ~~Memory search needs embedding provider~~ ✅ Gemini embeddings live
 - ~~Tailscale dashboard access~~ ❌ NEVER — crashes gateway
-- Scot has plans to share — crypto/trading related likely
+- ~~Scot's plans~~ ✅ Revealed: make money via Upwork freelancing + trading
+- Job Hunter agent needs to save ACTUAL URLs not "assumed from fetch"
+- Upwork blocked by Cloudflare — workaround: Brave search for indexed listings + Scot forwards links
+- Freelancer login blocked by reCAPTCHA — can browse but can't auto-submit

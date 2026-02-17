@@ -1,0 +1,35 @@
+[master a069e88] Auto-backup: 2026-02-17 00:00 UTC
+ 31 files changed, 2923 insertions(+), 1 deletion(-)
+ create mode 100644 archive/old-repo/ALPHA.md
+ create mode 100644 archive/old-repo/CRYPTO.md
+ create mode 100644 archive/old-repo/KIMCHI.md
+ create mode 100644 archive/old-repo/SIGNALS.md
+ create mode 100644 archive/old-repo/TCT-Strategy.md
+ create mode 100644 archive/old-repo/kimchi-bot.js
+ create mode 100644 archive/old-repo/kimchi-trader.js
+ create mode 100644 archive/old-repo/polymarket-action-plan.md
+ create mode 100644 archive/old-repo/skills/kimchi/SKILL.md
+ create mode 100644 archive/old-repo/skills/kimchi/mexc/SKILL.md
+ create mode 100644 archive/old-repo/skills/kimchi/onchain/SKILL.md
+ create mode 100644 archive/old-repo/skills/kimchi/price-monitor/SKILL.md
+ create mode 100644 archive/old-repo/skills/kimchi/sentiment/SKILL.md
+ create mode 100644 archive/old-repo/skills/kimchi/tradingview/SKILL.md
+ create mode 100644 archive/old-repo/tct_analysis.py
+ create mode 100644 archive/old-repo/tct_simple.py
+ create mode 100644 archive/old-repo/upwork/PROFILE.md
+ create mode 100644 archive/old-repo/upwork/applications/hyperliquid.md
+ create mode 100644 archive/old-repo/upwork/applications/kalshi-arbitrage.md
+ create mode 100644 archive/old-repo/upwork/applications/polymarket-200.md
+ create mode 100644 archive/old-repo/upwork/proposals/polymarket-bot.md
+ create mode 100644 archive/old-repo/upwork/templates/general.md
+ create mode 100644 dashboard/public/icon.svg
+ create mode 100644 dashboard/public/index.html
+ create mode 100644 dashboard/public/manifest.webmanifest
+ create mode 100644 dashboard/public/sw.js
+ create mode 100644 dashboard/server.js
+ create mode 100644 logs/git-push.log
+ create mode 100644 memory/2026-02-16.md
+ create mode 100755 scripts/git-push.sh
+To https://github.com/tocsnostrap/Openclaw-memory-.git
+   e83590c..a069e88  master -> master
+Pushed at Tue Feb 17 00:00:05 UTC 2026
