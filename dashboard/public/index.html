@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#08080d">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <title>Fred</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    :root{
+      --bg:#08080d;--s1:#111118;--s2:#191924;--s3:#22222f;--s4:#2c2c3d;
+      --brd:#2a2a3a;--brd2:#363648;
+      --t1:#eeeef4;--t2:#9898b0;--t3:#6a6a82;--t4:#484860;
+      --ac:#818cf8;--ac2:#6366f1;--ac-dim:rgba(129,140,248,0.12);
+      --gr:#34d399;--gr-dim:rgba(52,211,153,0.12);
+      --rd:#fb7185;--rd-dim:rgba(251,113,133,0.12);
+      --am:#fbbf24;--am-dim:rgba(251,191,36,0.12);
+      --bl:#60a5fa;--bl-dim:rgba(96,165,250,0.12);
+      --r:18px;--rs:12px;--rr:8px;
+      --font:'Inter',-apple-system,system-ui,sans-serif;
+      --mono:'JetBrains Mono',monospace;
+      --tab-h:72px;
+    }
+    body{font-family:var(--font);background:var(--bg);color:var(--t1);min-height:100dvh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+    /* ══════ ANIMATIONS ══════ */
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slideLeft{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.06);opacity:1}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    @keyframes expandIn{from{opacity:0;max-height:0}to{opacity:1;max-height:2000px}}
+
+    /* ══════ LOGIN ══════ */
+    #login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;padding:24px;animation:fadeIn .6s ease}
+    .login-glow{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,.25),transparent 70%);display:flex;align-items:center;justify-content:center;margin-bottom:24px;animation:breathe 4s ease-in-out infinite}
+    .login-glow .ic{font-size:56px}
+    .login-t{font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
+    .login-s{color:var(--t2);font-size:15px;margin-bottom:36px}
+    .login-i{width:100%;max-width:300px;padding:16px 20px;border-radius:var(--rs);border:1.5px solid var(--brd);background:var(--s1);color:var(--t1);font-family:var(--mono);font-size:15px;outline:none;transition:border-color .3s,box-shadow .3s;text-align:center;letter-spacing:1px}
+    .login-i:focus{border-color:var(--ac);box-shadow:0 0 0 4px rgba(129,140,248,.15)}
+    .login-i::placeholder{color:var(--t4);letter-spacing:0;font-family:var(--font)}
+    .login-b{margin-top:16px;width:100%;max-width:300px;padding:16px;border-radius:var(--rs);border:none;background:linear-gradient(135deg,var(--ac2),var(--ac));color:#fff;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;transition:transform .15s,opacity .2s}
+    .login-b:active{transform:scale(.97);opacity:.9}
+    .login-e{color:var(--rd);font-size:13px;margin-top:12px;min-height:20px}
+    #login.h{display:none}
+
+    /* ══════ APP SHELL ══════ */
+    #app{display:none}#app.on{display:flex;flex-direction:column;height:100dvh;animation:fadeIn .4s ease}
+
+    /* Topbar */
+    .top{position:sticky;top:0;z-index:100;padding:env(safe-area-inset-top,8px) 16px 10px;background:rgba(8,8,13,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(42,42,58,.4)}
+    .top-l{display:flex;align-items:center;gap:10px}
+    .top .nm{font-size:19px;font-weight:800;letter-spacing:-.5px}
+    .top .ic{font-size:20px}
+    .top-r{display:flex;gap:8px}
+    .ibtn{width:36px;height:36px;border-radius:10px;border:1px solid var(--brd);background:var(--s1);color:var(--t2);font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+    .ibtn:active{background:var(--s2);transform:scale(.92)}
+    .ibtn.spin svg{animation:spin .8s linear infinite}
+
+    /* Content area */
+    .content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--tab-h) + 20px)}
+    .pg{max-width:480px;margin:0 auto;padding:0 16px}
+
+    /* Tab bar */
+    .tabs{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,8,13,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(42,42,58,.5);padding:8px 0 env(safe-area-inset-bottom,8px);display:flex;justify-content:space-around;align-items:center}
+    .tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px;cursor:pointer;transition:all .2s;border-radius:12px;min-width:56px}
+    .tab:active{transform:scale(.9)}
+    .tab-ic{font-size:20px;transition:transform .2s}
+    .tab-lb{font-size:10px;font-weight:600;color:var(--t4);transition:color .2s;letter-spacing:.3px}
+    .tab.on .tab-ic{transform:scale(1.15)}
+    .tab.on .tab-lb{color:var(--ac)}
+
+    /* Page views */
+    .view{display:none;animation:slideUp .35s ease both}
+    .view.on{display:block}
+
+    /* ══════ SHARED COMPONENTS ══════ */
+    .card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:18px;margin-top:12px}
+    .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .card-t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t3)}
+    .badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;font-family:var(--mono)}
+    .badge-gr{background:var(--gr-dim);color:var(--gr)}.badge-rd{background:var(--rd-dim);color:var(--rd)}
+    .badge-am{background:var(--am-dim);color:var(--am)}.badge-bl{background:var(--bl-dim);color:var(--bl)}
+    .badge-ac{background:var(--ac-dim);color:var(--ac)}
+
+    .row{display:flex;justify-content:space-between;align-items:center;padding:9px 0}
+    .row:not(:last-child){border-bottom:1px solid var(--brd)}
+    .row-l{font-size:13px;color:var(--t2)}.row-r{font-size:13px;font-weight:600;text-align:right}
+
+    /* Progress bars */
+    .bar-w{height:5px;border-radius:3px;background:var(--s3);overflow:hidden;margin-top:6px}
+    .bar-f{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+    .bar-gr{background:linear-gradient(90deg,#059669,var(--gr))}.bar-am{background:linear-gradient(90deg,#d97706,var(--am))}.bar-rd{background:linear-gradient(90deg,#dc2626,var(--rd))}
+
+    /* Expandable */
+    .expand{cursor:pointer;user-select:none;-webkit-user-select:none}
+    .expand:active{opacity:.8}
+    .expand-body{overflow:hidden;max-height:0;opacity:0;transition:max-height .4s ease,opacity .3s ease,padding .3s ease;padding:0}
+    .expand-body.open{max-height:2000px;opacity:1;padding:12px 0 0}
+    .expand-arrow{font-size:12px;color:var(--t3);transition:transform .3s}
+    .expand-arrow.open{transform:rotate(90deg)}
+
+    /* ══════ HOME TAB ══════ */
+    .greet{padding:14px 0 4px}
+    .greet-t{font-size:26px;font-weight:800;letter-spacing:-.8px;line-height:1.2}
+    .greet-s{font-size:13px;color:var(--t2);margin-top:4px}
+
+    .hero{margin-top:14px;border-radius:var(--r);padding:22px;position:relative;overflow:hidden}
+    .hero.on{background:linear-gradient(145deg,#0d1f17,#0f1a2a);border:1px solid rgba(52,211,153,.2)}
+    .hero.off{background:linear-gradient(145deg,#1f0d15,#1a0f1a);border:1px solid rgba(251,113,133,.2)}
+    .hero-glow{position:absolute;top:-40px;right:-40px;width:150px;height:150px;border-radius:50%;filter:blur(60px);opacity:.35}
+    .hero.on .hero-glow{background:var(--gr)}.hero.off .hero-glow{background:var(--rd)}
+    .hero-top{display:flex;align-items:center;justify-content:space-between;position:relative}
+    .hero-st{display:flex;align-items:center;gap:10px}
+    .hero-dot{width:10px;height:10px;border-radius:50%;animation:pulse 2s infinite}
+    .hero.on .hero-dot{background:var(--gr);box-shadow:0 0 10px var(--gr)}.hero.off .hero-dot{background:var(--rd);box-shadow:0 0 10px var(--rd)}
+    .hero-lb{font-size:17px;font-weight:700}
+    .hero-up{font-size:12px;color:var(--t2);font-family:var(--mono);position:relative}
+    .hero-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:18px;position:relative}
+    .hero-n-l{font-size:10px;color:var(--t4);text-transform:uppercase;letter-spacing:.7px}
+    .hero-n-v{font-size:22px;font-weight:800;margin-top:1px;font-family:var(--mono);letter-spacing:-.5px}
+
+    .quick-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .qcard{background:var(--s1);border:1px solid var(--brd);border-radius:var(--rs);padding:14px;cursor:pointer;transition:transform .15s,border-color .2s}
+    .qcard:active{transform:scale(.96);border-color:var(--ac)}
+    .qcard-ic{font-size:22px;margin-bottom:6px}
+    .qcard-t{font-size:13px;font-weight:700;line-height:1.3}
+    .qcard-v{font-size:12px;color:var(--t2);margin-top:3px;font-family:var(--mono)}
+
+    /* ══════ SYSTEM TAB ══════ */
+    .metric{margin-bottom:14px}.metric:last-child{margin-bottom:0}
+    .metric-h{display:flex;justify-content:space-between;margin-bottom:4px}
+    .metric-l{font-size:13px;color:var(--t2)}.metric-v{font-size:13px;font-weight:600;font-family:var(--mono)}
+
+    .proc-row{display:grid;grid-template-columns:2.5fr 1fr 1fr;gap:8px;padding:7px 0;font-size:12px;align-items:center}
+    .proc-row:not(:last-child){border-bottom:1px solid var(--brd)}
+    .proc-cmd{font-family:var(--mono);color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .proc-val{text-align:right;font-family:var(--mono);font-weight:500}
+
+    .net-item{display:flex;justify-content:space-between;padding:8px 0;font-size:13px}
+    .net-item:not(:last-child){border-bottom:1px solid var(--brd)}
+    .net-if{font-weight:600;color:var(--ac)}.net-ip{font-family:var(--mono);color:var(--t2)}
+
+    /* ══════ MEMORY TAB ══════ */
+    .mem-item{padding:14px 0;border-bottom:1px solid var(--brd);cursor:pointer;-webkit-user-select:none;user-select:none}
+    .mem-item:last-child{border-bottom:none}
+    .mem-item:active{opacity:.8}
+    .mem-top{display:flex;align-items:center;justify-content:space-between}
+    .mem-name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .mem-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .mem-dot.lt{background:var(--am)}.mem-dot.daily{background:var(--ac)}
+    .mem-meta{font-size:11px;color:var(--t3);font-family:var(--mono);margin-top:4px}
+    .mem-sections{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+    .mem-tag{font-size:10px;padding:2px 8px;border-radius:4px;background:var(--s3);color:var(--t2)}
+    .mem-content{margin-top:12px;padding:14px;background:var(--s2);border-radius:var(--rs);border:1px solid var(--brd);font-size:12px;font-family:var(--mono);line-height:1.7;color:var(--t2);white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto}
+    .mem-content h1,.mem-content h2,.mem-content h3{color:var(--t1);font-family:var(--font);margin:12px 0 6px}
+    .mem-content strong{color:var(--t1)}
+
+    /* ══════ PROJECTS TAB ══════ */
+    .proj-card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--r);padding:16px;margin-top:10px;cursor:pointer;transition:transform .15s,border-color .2s;-webkit-user-select:none;user-select:none}
+    .proj-card:active{transform:scale(.98);border-color:var(--ac)}
+    .proj-top{display:flex;align-items:center;gap:12px}
+    .proj-ic{font-size:28px;width:44px;height:44px;background:var(--s2);border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .proj-info{flex:1;min-width:0}
+    .proj-t{font-size:15px;font-weight:700}
+    .proj-m{font-size:12px;color:var(--t3);font-family:var(--mono);margin-top:2px}
+    .proj-sections{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+    .proj-content{margin-top:12px;padding:14px;background:var(--s2);border-radius:var(--rs);border:1px solid var(--brd);font-size:12px;font-family:var(--mono);line-height:1.7;color:var(--t2);white-space:pre-wrap;word-break:break-word;max-height:500px;overflow-y:auto}
+
+    /* ══════ CONFIG TAB ══════ */
+    .cfg-section{margin-top:16px}
+    .cfg-section:first-child{margin-top:0}
+    .cfg-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:10px}
+    .cfg-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--s2);border:1px solid var(--brd);border-radius:var(--rs);margin-bottom:8px}
+    .cfg-ic{font-size:20px;width:36px;height:36px;background:var(--s3);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cfg-info{flex:1;min-width:0}
+    .cfg-name{font-size:13px;font-weight:600}
+    .cfg-val{font-size:12px;color:var(--t2);font-family:var(--mono);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+    .key-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--s2);border:1px solid var(--brd);border-radius:var(--rs);margin-bottom:8px}
+    .key-info{display:flex;align-items:center;gap:10px}
+    .key-dot{width:8px;height:8px;border-radius:50%}
+    .key-dot.ok{background:var(--gr)}.key-dot.miss{background:var(--rd)}
+    .key-name{font-size:13px;font-weight:600}
+    .key-use{font-size:12px;color:var(--t3)}
+
+    .ws-file{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13px}
+    .ws-file:not(:last-child){border-bottom:1px solid var(--brd)}
+    .ws-name{font-weight:500;display:flex;align-items:center;gap:6px}
+    .ws-check{color:var(--gr);font-size:14px}.ws-cross{color:var(--rd);font-size:14px}
+    .ws-size{font-family:var(--mono);color:var(--t3);font-size:12px}
+
+    /* Footer */
+    .foot{text-align:center;padding:20px 0 12px;font-size:11px;color:var(--t4)}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-glow"><span class="ic">🔧</span></div>
+  <div class="login-t">Fred</div>
+  <div class="login-s">Enter your access token</div>
+  <input class="login-i" type="password" id="tok-in" placeholder="Token" autocomplete="off" autofocus>
+  <button class="login-b" id="login-btn">Connect</button>
+  <div class="login-e" id="login-err"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="top">
+    <div class="top-l"><span class="ic">🔧</span><span class="nm">Fred</span></div>
+    <div class="top-r">
+      <button class="ibtn" id="ref-btn" title="Refresh">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 0 1-15.36 6.36"/><path d="M3 12a9 9 0 0 1 15.36-6.36"/><polyline points="21 3 21 9 15 9"/><polyline points="3 21 3 15 9 15"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- HOME -->
+    <div class="view on" data-view="home">
+      <div class="pg">
+        <div class="greet">
+          <div class="greet-t" id="greet-t"></div>
+          <div class="greet-s" id="greet-s"></div>
+        </div>
+        <div class="hero on" id="hero">
+          <div class="hero-glow"></div>
+          <div class="hero-top">
+            <div class="hero-st"><div class="hero-dot"></div><span class="hero-lb" id="hero-lb">—</span></div>
+            <span class="hero-up" id="hero-up">—</span>
+          </div>
+          <div class="hero-nums">
+            <div><div class="hero-n-l">CPU</div><div class="hero-n-v" id="h-cpu">—</div></div>
+            <div><div class="hero-n-l">Memory</div><div class="hero-n-v" id="h-mem">—</div></div>
+            <div><div class="hero-n-l">Disk</div><div class="hero-n-v" id="h-disk">—</div></div>
+          </div>
+        </div>
+        <div class="quick-cards" id="qcards"></div>
+        <div class="card" id="home-activity">
+          <div class="card-h"><span class="card-t">Latest Activity</span><span class="badge badge-gr" id="act-date">—</span></div>
+          <div id="home-feed"></div>
+        </div>
+        <div class="foot" id="foot-time">—</div>
+      </div>
+    </div>
+
+    <!-- SYSTEM -->
+    <div class="view" data-view="system">
+      <div class="pg">
+        <div style="padding:14px 0 4px"><div class="greet-t">System</div></div>
+
+        <div class="card">
+          <div class="card-h"><span class="card-t">Resources</span><span class="badge badge-bl" id="sys-host">—</span></div>
+          <div class="metric"><div class="metric-h"><span class="metric-l">Memory</span><span class="metric-v" id="s-mem-t">—</span></div><div class="bar-w"><div class="bar-f bar-gr" id="s-mem-b" style="width:0"></div></div></div>
+          <div class="metric"><div class="metric-h"><span class="metric-l">Swap</span><span class="metric-v" id="s-swap-t">—</span></div><div class="bar-w"><div class="bar-f bar-gr" id="s-swap-b" style="width:0"></div></div></div>
+          <div class="metric"><div class="metric-h"><span class="metric-l">Disk</span><span class="metric-v" id="s-disk-t">—</span></div><div class="bar-w"><div class="bar-f bar-gr" id="s-disk-b" style="width:0"></div></div></div>
+          <div class="metric"><div class="metric-h"><span class="metric-l">Load (1m / 5m / 15m)</span><span class="metric-v" id="s-load-t">—</span></div><div class="bar-w"><div class="bar-f bar-gr" id="s-load-b" style="width:0"></div></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="card-t">Gateway</span><span class="badge" id="gw-badge">—</span></div>
+          <div class="row"><span class="row-l">Status</span><span class="row-r" id="gw-st">—</span></div>
+          <div class="row"><span class="row-l">PID</span><span class="row-r" id="gw-pid">—</span></div>
+          <div class="row"><span class="row-l">Listening</span><span class="row-r" id="gw-listen">—</span></div>
+          <div class="row"><span class="row-l">Uptime</span><span class="row-r" id="gw-up">—</span></div>
+          <div class="row"><span class="row-l">Connections</span><span class="row-r" id="gw-conn">—</span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="card-t">Top Processes</span></div>
+          <div class="proc-row" style="color:var(--t3);font-weight:600;border-bottom:1px solid var(--brd)"><span>Command</span><span style="text-align:right">CPU%</span><span style="text-align:right">Mem%</span></div>
+          <div id="proc-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="card-t">Network</span></div>
+          <div id="net-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="card-t">Info</span></div>
+          <div class="row"><span class="row-l">Hostname</span><span class="row-r" id="inf-host">—</span></div>
+          <div class="row"><span class="row-l">Kernel</span><span class="row-r" id="inf-kern">—</span></div>
+          <div class="row"><span class="row-l">CPUs</span><span class="row-r" id="inf-cpu">—</span></div>
+          <div class="row"><span class="row-l">Uptime</span><span class="row-r" id="inf-up">—</span></div>
+        </div>
+        <div class="foot">—</div>
+      </div>
+    </div>
+
+    <!-- MEMORY -->
+    <div class="view" data-view="memory">
+      <div class="pg">
+        <div style="padding:14px 0 4px;display:flex;align-items:center;justify-content:space-between">
+          <div class="greet-t">Memory</div>
+          <span class="badge badge-am" id="mem-count">—</span>
+        </div>
+        <div class="card"><div id="mem-list"></div></div>
+        <div class="foot">—</div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="view" data-view="projects">
+      <div class="pg">
+        <div style="padding:14px 0 4px"><div class="greet-t">Projects</div><div class="greet-s">Archived from previous workspace</div></div>
+        <div id="proj-list"></div>
+        <div class="foot">—</div>
+      </div>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="view" data-view="config">
+      <div class="pg">
+        <div style="padding:14px 0 4px"><div class="greet-t">Configuration</div></div>
+
+        <div class="cfg-section">
+          <div class="cfg-label">Models</div>
+          <div id="cfg-models"></div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-label">Voice</div>
+          <div id="cfg-voice"></div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-label">Infrastructure</div>
+          <div id="cfg-infra"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="card-t">API Keys</span></div>
+          <div id="cfg-keys"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><span class="card-t">Workspace Files</span></div>
+          <div id="cfg-ws"></div>
+        </div>
+        <div class="foot">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tabs">
+    <div class="tab on" data-tab="home"><span class="tab-ic">🏠</span><span class="tab-lb">Home</span></div>
+    <div class="tab" data-tab="system"><span class="tab-ic">📊</span><span class="tab-lb">System</span></div>
+    <div class="tab" data-tab="memory"><span class="tab-ic">🧠</span><span class="tab-lb">Memory</span></div>
+    <div class="tab" data-tab="projects"><span class="tab-ic">📁</span><span class="tab-lb">Projects</span></div>
+    <div class="tab" data-tab="config"><span class="tab-ic">⚙️</span><span class="tab-lb">Config</span></div>
+  </div>
+</div>
+
+<script>
+const API=location.origin+'/api';
+let token=localStorage.getItem('fred-tok'),D=null,openMem={},openProj={};
+
+// ── Auth ──
+if(token){showApp();load()}
+document.getElementById('login-btn').onclick=doLogin;
+document.getElementById('tok-in').onkeydown=e=>{if(e.key==='Enter')doLogin()};
+document.getElementById('ref-btn').onclick=load;
+
+function doLogin(){
+  const t=document.getElementById('tok-in').value.trim();
+  if(!t)return;token=t;localStorage.setItem('fred-tok',t);showApp();load();
+}
+function showApp(){document.getElementById('login').classList.add('h');document.getElementById('app').classList.add('on')}
+
+// ── Tabs ──
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');
+  const v=document.querySelector(`.view[data-view="${t.dataset.tab}"]`);
+  v.classList.add('on');
+  document.querySelector('.content').scrollTop=0;
+});
+
+// Quick card tab jumps
+function goTab(name){document.querySelector(`.tab[data-tab="${name}"]`).click()}
+
+// ── Fetch ──
+async function load(){
+  const btn=document.getElementById('ref-btn');btn.classList.add('spin');
+  try{
+    const r=await fetch(API+'/dashboard',{headers:{Authorization:'Bearer '+token}});
+    if(r.status===401){localStorage.removeItem('fred-tok');location.reload();return}
+    D=await r.json();render(D);
+  }catch(e){console.error(e)}
+  btn.classList.remove('spin');
+}
+
+async function loadMemFile(name){
+  const r=await fetch(API+'/memory/read?file='+encodeURIComponent(name),{headers:{Authorization:'Bearer '+token}});
+  return(await r.json()).content||'';
+}
+async function loadProjFile(name){
+  const r=await fetch(API+'/project/read?file='+encodeURIComponent(name),{headers:{Authorization:'Bearer '+token}});
+  return(await r.json()).content||'';
+}
+
+// ── Render ──
+function render(d){
+  // Greeting
+  const st=new Date(Date.now()+3*3600000);
+  const h=st.getUTCHours();
+  let g=h<6?'Night owl 🦉':h<12?'Good morning':h<17?'Good afternoon':h<22?'Good evening':'Night owl 🦉';
+  document.getElementById('greet-t').textContent=g+', Scot';
+  const ts=st.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'});
+  document.getElementById('greet-s').textContent=ts+' AST · '+st.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short',timeZone:'UTC'});
+
+  // Hero
+  const hero=document.getElementById('hero');
+  hero.className='hero '+(d.gateway.running?'on':'off');
+  document.getElementById('hero-lb').textContent=d.gateway.running?'Online':'Offline';
+  document.getElementById('hero-up').textContent=d.gateway.running?dur(d.gateway.uptimeSeconds):'down';
+  const memP=d.system.memory.total?Math.round(d.system.memory.used/d.system.memory.total*100):0;
+  const diskP=d.system.disk.total?Math.round(d.system.disk.used/d.system.disk.total*100):0;
+  const loadP=Math.min(100,Math.round(d.system.load.m1/d.system.cpuCount*100));
+  document.getElementById('h-cpu').textContent=loadP+'%';
+  document.getElementById('h-mem').textContent=memP+'%';
+  document.getElementById('h-disk').textContent=diskP+'%';
+
+  // Quick cards
+  document.getElementById('qcards').innerHTML=[
+    {ic:'🧠',t:'Memory',v:d.memory.length+' files',tab:'memory'},
+    {ic:'📁',t:'Projects',v:d.projects.length+' archived',tab:'projects'},
+    {ic:'⚡',t:'Model',v:d.config.model,tab:'config'},
+    {ic:'📡',t:'Channel',v:d.config.channels?.join(', ')||'—',tab:'config'},
+  ].map(c=>`<div class="qcard" onclick="goTab('${c.tab}')"><div class="qcard-ic">${c.ic}</div><div class="qcard-t">${c.t}</div><div class="qcard-v">${c.v}</div></div>`).join('');
+
+  // Home activity
+  if(d.activity.file){
+    document.getElementById('act-date').textContent=d.activity.file.replace('.md','');
+    const sects=d.activity.sections.slice(0,3);
+    document.getElementById('home-feed').innerHTML=sects.map(s=>
+      `<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--ac);margin-bottom:6px;padding-left:10px;border-left:3px solid var(--ac)">${s.title}</div>`+
+      s.items.slice(0,3).map(i=>`<div style="font-size:12px;color:var(--t2);padding:2px 0 2px 13px;position:relative;line-height:1.5"><span style="position:absolute;left:0;top:8px;width:4px;height:4px;border-radius:50%;background:var(--t4)"></span>${esc(i)}</div>`).join('')+
+      (s.items.length>3?`<div style="font-size:11px;color:var(--t4);padding-left:13px;margin-top:2px">+${s.items.length-3} more</div>`:'')+
+      `</div>`
+    ).join('');
+  }
+
+  document.getElementById('foot-time').textContent='Updated '+new Date().toLocaleTimeString();
+
+  // ── SYSTEM ──
+  document.getElementById('sys-host').textContent=d.system.hostname?.split('-')[0]||'—';
+  setBar('s-mem',memP,bytes(d.system.memory.used)+' / '+bytes(d.system.memory.total));
+  const swapP=d.system.swap.total?Math.round(d.system.swap.used/d.system.swap.total*100):0;
+  setBar('s-swap',swapP,bytes(d.system.swap.used)+' / '+bytes(d.system.swap.total));
+  setBar('s-disk',diskP,bytes(d.system.disk.used)+' / '+bytes(d.system.disk.total));
+  setBar('s-load',loadP,d.system.load.m1.toFixed(2)+' / '+d.system.load.m5.toFixed(2)+' / '+d.system.load.m15.toFixed(2));
+
+  const gwb=document.getElementById('gw-badge');
+  gwb.textContent=d.gateway.running?'running':'stopped';
+  gwb.className='badge '+(d.gateway.running?'badge-gr':'badge-rd');
+  document.getElementById('gw-st').textContent=d.gateway.running?'Active':'Down';
+  document.getElementById('gw-pid').textContent=d.gateway.pid||'—';
+  document.getElementById('gw-listen').textContent=d.gateway.listen||'—';
+  document.getElementById('gw-up').textContent=dur(d.gateway.uptimeSeconds);
+  document.getElementById('gw-conn').textContent=d.gateway.connections;
+
+  document.getElementById('proc-list').innerHTML=(d.system.procs||[]).map(p=>
+    `<div class="proc-row"><span class="proc-cmd">${esc(p.command)}</span><span class="proc-val">${p.cpu}%</span><span class="proc-val">${p.mem}%</span></div>`
+  ).join('');
+
+  document.getElementById('net-list').innerHTML=(d.system.interfaces||[]).map(n=>
+    `<div class="net-item"><span class="net-if">${n.iface}</span><span class="net-ip">${n.addr}</span></div>`
+  ).join('');
+
+  document.getElementById('inf-host').textContent=d.system.hostname;
+  document.getElementById('inf-kern').textContent=d.system.kernel;
+  document.getElementById('inf-cpu').textContent=d.system.cpuCount;
+  document.getElementById('inf-up').textContent=dur(d.system.uptimeSeconds);
+
+  // ── MEMORY ──
+  document.getElementById('mem-count').textContent=d.memory.length+' files';
+  document.getElementById('mem-list').innerHTML=d.memory.map((f,i)=>{
+    const isOpen=openMem[f.name];
+    return`<div class="mem-item" data-memfile="${f.name}">
+      <div class="mem-top" onclick="toggleMem('${f.name}',this)">
+        <div class="mem-name"><span class="mem-dot ${f.type==='longterm'?'lt':'daily'}"></span>${f.name}<span class="expand-arrow ${isOpen?'open':''}">▸</span></div>
+      </div>
+      <div class="mem-meta">${bytes(f.size)} · ${f.lineCount} lines · ${ago(f.modified)}</div>
+      ${f.sections?.length?'<div class="mem-sections">'+f.sections.map(s=>`<span class="mem-tag">${s}</span>`).join('')+'</div>':''}
+      <div class="expand-body ${isOpen?'open':''}" id="mem-body-${i}">${isOpen&&openMem[f.name]?'<div class="mem-content">'+fmtMd(openMem[f.name])+'</div>':'<div style="text-align:center;padding:12px;color:var(--t3);font-size:12px">Loading...</div>'}</div>
+    </div>`;
+  }).join('');
+
+  // ── PROJECTS ──
+  const icons={'KIMCHI':'🌶️','Kimchi':'🌶️','CRYPTO':'₿','Crypto':'₿','Alpha':'🔬','ALPHA':'🔬','TCT':'📊','Signal':'📡','SIGNAL':'📡','Polymarket':'🎲','polymarket':'🎲'};
+  document.getElementById('proj-list').innerHTML=(d.projects||[]).map((p,i)=>{
+    const ic=Object.keys(icons).find(k=>p.title.includes(k))||'';
+    const isOpen=openProj[p.file];
+    return`<div class="proj-card" data-projfile="${p.file}">
+      <div onclick="toggleProj('${p.file}',this)">
+        <div class="proj-top">
+          <div class="proj-ic">${icons[ic]||'📄'}</div>
+          <div class="proj-info"><div class="proj-t">${esc(p.title)}<span class="expand-arrow ${isOpen?'open':''}" style="margin-left:8px">▸</span></div><div class="proj-m">${bytes(p.size)} · ${p.lineCount} lines</div></div>
+        </div>
+        ${p.sections?.length?'<div class="proj-sections">'+p.sections.map(s=>`<span class="mem-tag">${s}</span>`).join('')+'</div>':''}
+      </div>
+      <div class="expand-body ${isOpen?'open':''}" id="proj-body-${i}">${isOpen&&openProj[p.file]?'<div class="proj-content">'+fmtMd(openProj[p.file])+'</div>':'<div style="text-align:center;padding:12px;color:var(--t3);font-size:12px">Loading...</div>'}</div>
+    </div>`;
+  }).join('');
+
+  // ── CONFIG ──
+  document.getElementById('cfg-models').innerHTML=[
+    {ic:'🧠',n:'Primary',v:d.config.modelId||'—'},
+    {ic:'⚡',n:'Sub-agents',v:d.config.subagentModel||'inherited'},
+    {ic:'🔍',n:'Memory Search',v:(d.config.memoryProvider||'none')+' / '+(d.config.memoryModel||'—')},
+  ].map(c=>`<div class="cfg-item"><div class="cfg-ic">${c.ic}</div><div class="cfg-info"><div class="cfg-name">${c.n}</div><div class="cfg-val">${c.v}</div></div></div>`).join('');
+
+  document.getElementById('cfg-voice').innerHTML=[
+    {ic:'🗣',n:'TTS Provider',v:d.config.ttsProvider+' ('+d.config.ttsMode+')'},
+    {ic:'🎙',n:'TTS Voice',v:d.config.ttsVoice||'—'},
+    {ic:'👂',n:'STT',v:d.config.sttProvider+' / '+d.config.sttModel},
+  ].map(c=>`<div class="cfg-item"><div class="cfg-ic">${c.ic}</div><div class="cfg-info"><div class="cfg-name">${c.n}</div><div class="cfg-val">${c.v}</div></div></div>`).join('');
+
+  document.getElementById('cfg-infra').innerHTML=[
+    {ic:'🌐',n:'Gateway Bind',v:d.config.gatewayBind+':'+d.config.gatewayPort},
+    {ic:'🌍',n:'Browser',v:d.config.browser},
+    {ic:'🔒',n:'DM Policy',v:d.config.dmPolicy},
+    {ic:'📦',n:'Compaction',v:d.config.compaction},
+  ].map(c=>`<div class="cfg-item"><div class="cfg-ic">${c.ic}</div><div class="cfg-info"><div class="cfg-name">${c.n}</div><div class="cfg-val">${c.v}</div></div></div>`).join('');
+
+  document.getElementById('cfg-keys').innerHTML=(d.config.apiKeys||[]).map(k=>
+    `<div class="key-row"><div class="key-info"><span class="key-dot ${k.status==='active'?'ok':'miss'}"></span><span class="key-name">${k.name}</span></div><span class="key-use">${k.use}</span></div>`
+  ).join('');
+
+  document.getElementById('cfg-ws').innerHTML=(d.workspace||[]).map(f=>
+    `<div class="ws-file"><span class="ws-name">${f.exists?'<span class="ws-check">✓</span>':'<span class="ws-cross">✗</span>'}${f.name}</span>${f.exists?'<span class="ws-size">'+bytes(f.size)+'</span>':'<span class="ws-size" style="color:var(--rd)">missing</span>'}</div>`
+  ).join('');
+}
+
+// ── Expand/Collapse ──
+async function toggleMem(name,el){
+  const item=el.closest('.mem-item');
+  const body=item.querySelector('.expand-body');
+  const arrow=item.querySelector('.expand-arrow');
+  if(body.classList.contains('open')){
+    body.classList.remove('open');arrow.classList.remove('open');
+    delete openMem[name];
+  }else{
+    body.classList.add('open');arrow.classList.add('open');
+    if(!openMem[name]){
+      const content=await loadMemFile(name);
+      openMem[name]=content;
+      body.innerHTML='<div class="mem-content">'+fmtMd(content)+'</div>';
+    }
+  }
+}
+
+async function toggleProj(name,el){
+  const card=el.closest('.proj-card');
+  const body=card.querySelector('.expand-body');
+  const arrow=card.querySelector('.expand-arrow');
+  if(body.classList.contains('open')){
+    body.classList.remove('open');arrow.classList.remove('open');
+    delete openProj[name];
+  }else{
+    body.classList.add('open');arrow.classList.add('open');
+    if(!openProj[name]){
+      const content=await loadProjFile(name);
+      openProj[name]=content;
+      body.innerHTML='<div class="proj-content">'+fmtMd(content)+'</div>';
+    }
+  }
+}
+
+// ── Helpers ──
+function setBar(id,pct,text){
+  document.getElementById(id+'-t').textContent=text;
+  const b=document.getElementById(id+'-b');
+  b.style.width=pct+'%';
+  b.className='bar-f '+(pct>85?'bar-rd':pct>65?'bar-am':'bar-gr');
+}
+
+function bytes(b){if(!b)return'0';if(b>=1073741824)return(b/1073741824).toFixed(1)+'GB';if(b>=1048576)return(b/1048576).toFixed(0)+'MB';if(b>=1024)return(b/1024).toFixed(0)+'KB';return b+'B'}
+function dur(s){if(!s)return'—';const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);if(d>0)return d+'d '+h+'h';if(h>0)return h+'h '+m+'m';return m+'m'}
+function ago(date){const s=Math.floor((Date.now()-new Date(date).getTime())/1000);if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')}
+
+function fmtMd(md){
+  return esc(md)
+    .replace(/^### (.+)$/gm,'<h3 style="color:var(--t1);font-size:13px;font-weight:700;margin:10px 0 4px">$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2 style="color:var(--ac);font-size:14px;font-weight:700;margin:14px 0 6px">$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1 style="color:var(--t1);font-size:16px;font-weight:800;margin:0 0 8px">$1</h1>')
+    .replace(/^[-*] (.+)$/gm,'<div style="padding:2px 0 2px 12px;position:relative"><span style="position:absolute;left:0;top:8px;width:4px;height:4px;border-radius:50%;background:var(--t4)"></span>$1</div>')
+    .replace(/\n{2,}/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
+// Auto-refresh
+setInterval(load,30000);
+
+// Service worker
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+
+// Cache
+const cached=localStorage.getItem('fred-cache');
+if(cached&&token)try{D=JSON.parse(cached);render(D)}catch{}
+function saveCache(){if(D)localStorage.setItem('fred-cache',JSON.stringify(D))}
+setInterval(saveCache,10000);
+</script>
+</body>
+</html>
