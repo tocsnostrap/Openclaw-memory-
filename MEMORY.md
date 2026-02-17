@@ -51,6 +51,15 @@
 - Brave web search: key in tools.web.search.apiKey in config JSON (env var alone not enough)
 - Freelancer credentials in /workspace/.credentials (gitignored)
 
+## Notion Integration
+- Connected to "Scot Paterson's Notion" via API (internal integration "Open claw")
+- API key in `/opt/openclaw.env` as `NOTION_API_KEY`
+- **Fred's Hub** root page: `30a6384b-ca28-805c-97c1-d002daf0b5de`
+- Sub-pages: Ideas, Trading, Work, Personal, Lists, Fred Log
+- Full page ID mapping in `/workspace/notion/CONFIG.md`
+- Scot's existing pages visible: Habit Tracker, Monthly Budget, Investments Tracker, TCT Trading System, Gate.io 10x Scanner
+- Limitation: internal integrations can't create workspace-level pages (must nest under existing)
+
 ## Pending
 - GitHub PAT needed from Scot to push workspace backup (low priority — VPS is temporary)
 - ~~Memory search needs embedding provider~~ ✅ Gemini embeddings live
