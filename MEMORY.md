@@ -68,3 +68,5 @@
 - Job Hunter agent needs to save ACTUAL URLs not "assumed from fetch"
 - Upwork blocked by Cloudflare — workaround: Brave search for indexed listings + Scot forwards links
 - Freelancer login blocked by reCAPTCHA — can browse but can't auto-submit
+- Job Hunter agent needs to save ACTUAL URLs not "assumed from fetch"
+- Freelancer project page URLs can't be fetched (404s) or constructed — must come from search results

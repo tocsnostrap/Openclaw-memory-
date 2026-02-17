@@ -85,10 +85,16 @@ Save found jobs to /root/.openclaw/workspace/jobs/YYYY-MM-DD.md with:
 - Job title
 - Platform (Upwork/Freelancer)
 - Budget range
-- URL
+- **ACTUAL URL** (copy the EXACT URL from search results or the page you fetched — DO NOT construct or guess URLs)
 - Key requirements (brief)
 - Bid count (if visible)
 - Category: bot | scraper | ai | web | automation | data | other
+
+## ⚠️ CRITICAL: URLs MUST BE REAL
+- ONLY include URLs you got directly from search results or web_fetch
+- NEVER construct URLs from job titles or slugs
+- If you can't find the real URL, write "URL: not found — search Freelancer for: [job title]"
+- Fake URLs waste Scot's time and make us look amateur
 
 ## DO NOT Evaluate
 Your job is to FIND jobs, not evaluate them. List everything that could possibly be done by a developer with AI assistance. Fred will evaluate and decide.
